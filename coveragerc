@@ -1,7 +1,0 @@
-[run]
-source = authentication/,
-omit= 
-    */home/tomi/.local/share/virtualenvs/Zuri_project-mBXxXTIR/*
-    */migrations/*
-    */tests/*
-    */__init__.py
