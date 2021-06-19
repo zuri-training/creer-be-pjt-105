@@ -8,6 +8,9 @@ django = "*"
 django-restframework = "*"
 environs = "*"
 dj-database-url = "*"
+djangorestframework = "*"
+gunicorn = "*"
+coverage = "*"
 
 [dev-packages]
 
