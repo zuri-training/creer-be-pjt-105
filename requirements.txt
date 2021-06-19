@@ -1,9 +1,11 @@
 asgiref==3.3.4
+coverage==5.5
 dj-database-url==0.5.0
 Django==3.2.4
 django-restframework==0.0.1
 djangorestframework==3.12.4
 environs==9.3.2
+gunicorn==20.1.0
 marshmallow==3.12.1
 python-dotenv==0.17.1
 pytz==2021.1
