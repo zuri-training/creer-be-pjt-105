@@ -11,6 +11,7 @@ dj-database-url = "*"
 djangorestframework = "*"
 gunicorn = "*"
 coverage = "*"
+pyjwt = "*"
 
 [dev-packages]
 
