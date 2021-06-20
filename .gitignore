@@ -10,4 +10,4 @@ media
 htmlcov/
 coveragerc
 .coverage
-
+staticfiles/

@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 from environs import Env
-import django.heroku
+import django_heroku
 
 env = Env()
 env.read_env()
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
     'rest_framework',
     'authentication',
@@ -164,8 +165,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SITE_ID = 2
+SITE_ID = 1
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-django_heroku.settings(local())
+# LOGIN_REDIRECT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/'
+django_heroku.settings(locals())
