@@ -11,6 +11,9 @@ dj-database-url = "*"
 djangorestframework = "*"
 gunicorn = "*"
 coverage = "*"
+pyjwt = "*"
+django-allauth = "*"
+django-heroku = "*"
 
 [dev-packages]
 
