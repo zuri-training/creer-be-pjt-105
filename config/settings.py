@@ -29,7 +29,7 @@ DEBUG = env.bool('DEBUG', default=False)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['https://creer-pjt-105.herokuapp.com/','127.0.0.1']
 
 AUTH_USER_MODEL = "authentication.User"
 
