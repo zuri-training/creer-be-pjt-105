@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 from environs import Env
 import django_heroku
+from datetime import timedelta
 
 env = Env()
 env.read_env()
@@ -29,7 +30,7 @@ DEBUG = env.bool('DEBUG', default=False)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['https://creer-pjt-105.herokuapp.com/','127.0.0.1']
 
 AUTH_USER_MODEL = "authentication.User"
 
@@ -44,11 +45,12 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'authentication',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -115,8 +117,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK= {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'authentication.jwt.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 AUTHENTICATION_BACKENDS = [
@@ -124,17 +131,17 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SOCIALACCOUNT_PROVIDERS = {
-    'google':{
-        'SCOPE':[
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS':{
-            'access_type':'online',
-        }
-    }
-}
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google':{
+#         'SCOPE':[
+#             'profile',
+#             'email',
+#         ],
+#         'AUTH_PARAMS':{
+#             'access_type':'online',
+#         }
+#     }
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -170,3 +177,4 @@ SITE_ID = 1
 # LOGIN_REDIRECT_URL = '/'
 # LOGOUT_REDIRECT_URL = '/'
 django_heroku.settings(locals())
+del DATABASES['default']['OPTIONS']['sslmode']
