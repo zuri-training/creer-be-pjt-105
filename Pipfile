@@ -14,7 +14,7 @@ coverage = "*"
 pyjwt = "*"
 django-allauth = "*"
 django-heroku = "*"
-django-environ = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 
