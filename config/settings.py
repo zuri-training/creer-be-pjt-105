@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 from environs import Env
 import django_heroku
+from datetime import timedelta
 
 env = Env()
 env.read_env()
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'authentication',
     # 'allauth',
     # 'allauth.account',
@@ -115,8 +117,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK= {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'authentication.jwt.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 AUTHENTICATION_BACKENDS = [
@@ -170,3 +177,4 @@ SITE_ID = 1
 # LOGIN_REDIRECT_URL = '/'
 # LOGOUT_REDIRECT_URL = '/'
 django_heroku.settings(locals())
+del DATABASES['default']['OPTIONS']['sslmode']
