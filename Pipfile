@@ -15,6 +15,7 @@ pyjwt = "*"
 django-allauth = "*"
 django-heroku = "*"
 djangorestframework-simplejwt = "*"
+drf-yasg = "*"
 
 [dev-packages]
 
