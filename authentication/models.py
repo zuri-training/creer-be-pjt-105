@@ -8,6 +8,7 @@ from django.utils import timezone
 import jwt
 from datetime import datetime, timedelta
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 # Create your models here.
 
 
@@ -106,3 +107,38 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
         token = jwt.encode({'username':self.username, 'email':self.email,'exp':datetime.utcnow() + timedelta(hours=24)},  settings.SECRET_KEY, algorithm='HS256')
         return token
 
+#creating the question model with title and detail feild
+
+class Question(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, default="", null=True)
+    tags = ArrayField(models.CharField(max_length=255, unique=False,
+                            blank=True), unique=False, blank=True,
+                            default=list)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    image = models.ImageField(null=True, blank=True)
+    class Meta:
+        ordering = ["-created_at", "-updated_at"]
+
+    def __str__(self):
+        return self.title
+
+
+#creating the answer model
+
+class Answer(models.Model):
+    answer_text = models.TextField()
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.answer_text
+
+    class Meta:
+        ordering = ["-created_at"]
+        managed = True
+        verbose_name = 'Answer'
+        verbose_name_plural = 'Answers'
