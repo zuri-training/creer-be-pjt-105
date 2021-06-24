@@ -47,12 +47,23 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'drf_yasg',
     'authentication',
     # 'allauth',
     # 'allauth.account',
     # 'allauth.socialaccount',
     # 'allauth.socialaccount.providers.google',
 ]
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS':{
+        'Auth Token eg [Bearer] (JWT)':{
+            "type":"apiKey",
+            "name":"Authorization",
+            "in":"header"
+        }
+    }
+}
 
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
