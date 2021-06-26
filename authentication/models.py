@@ -10,6 +10,9 @@ from datetime import datetime, timedelta
 from django.conf import settings
 # Create your models here.
 
+AUTH_PROVIDERS = {
+    "google":"google",
+}
 
 class MyUserManager(UserManager):
     use_in_migrations = True
@@ -94,6 +97,9 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
         help_text=_(
             'Designates whether this users email is verified.'
         ),
+    )
+    auth_provider = models.CharField(
+        max_length=255, blank=False,null=False, default=AUTH_PROVIDERS.get('email')
     )
     objects = MyUserManager()
 
