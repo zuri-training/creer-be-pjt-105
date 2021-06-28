@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_yasg',
     'authentication',
+    'social_auth',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
