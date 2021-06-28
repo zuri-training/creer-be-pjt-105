@@ -1,4 +1,5 @@
 .env
+env_pjt/
 *.log
 *.pot
 *.pyc

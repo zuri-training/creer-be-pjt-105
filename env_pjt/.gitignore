@@ -1,5 +1,6 @@
 # created by virtualenv automatically
 .env
+env_pjt/
 *.log
 *.pot
 *.pyc
