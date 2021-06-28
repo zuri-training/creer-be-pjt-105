@@ -16,6 +16,7 @@ django-allauth = "*"
 django-heroku = "*"
 djangorestframework-simplejwt = "*"
 drf-yasg = "*"
+google-api-python-client = "*"
 
 [dev-packages]
 

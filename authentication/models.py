@@ -10,6 +10,9 @@ from datetime import datetime, timedelta
 from django.conf import settings
 # Create your models here.
 
+AUTH_PROVIDERS = {
+    "google":"google",
+}
 
 class MyUserManager(UserManager):
     use_in_migrations = True
@@ -95,12 +98,17 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
             'Designates whether this users email is verified.'
         ),
     )
+    auth_provider = models.CharField(
+        max_length=255, blank=False,null=False, default=AUTH_PROVIDERS.get('email')
+    )
     objects = MyUserManager()
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    def __str__(self):
+        return self.email
     @property  
     def token(self):
         token = jwt.encode({'username':self.username, 'email':self.email,'exp':datetime.utcnow() + timedelta(hours=24)},  settings.SECRET_KEY, algorithm='HS256')
