@@ -1,5 +1,5 @@
 from rest_framework import fields, serializers
-from authentication.models import Answer, User, Question
+from authentication.models import User
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=128, min_length=6, write_only=True)
@@ -21,15 +21,3 @@ class LoginSerializer(serializers.ModelSerializer):
         read_only_fields =['token']
 
 
-class QuestionSerializer(serializers.ModelSerializer):
-    author = User(required=False, read_only=True)
-    serializers.ImageField(use_url=True, required=False, allow_null=True)
-    class Meta:
-        model = Question
-        fields = ('__all__')
-
-
-class AnswerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Answer
-        fields = ('__all__')

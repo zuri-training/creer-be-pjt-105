@@ -1,12 +1,10 @@
 from django.shortcuts import render
 from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import GenericAPIView
 from rest_framework import permissions
-from authentication.serializers import AnswerSerializer, RegisterSerializer, LoginSerializer, QuestionSerializer
-from rest_framework import response, viewsets
+from authentication.serializers import RegisterSerializer, LoginSerializer
+from rest_framework import response
 from django.contrib.auth import authenticate
-from authentication.models import Question, Answer
 # Create your views here.
 
 
@@ -44,17 +42,4 @@ class LoginAPIView(GenericAPIView):
             serializer = self.serializer_class(user)
 
             return response.Response(serializer.data, status=status.HTTP_200_OK)
-        return response.Response({'message':'Invalid Credentials, try again'}, status=status.HTTP_401_UNAUTHORIZED)
-        
-class PostQuestionAPI(ListCreateAPIView):
-    queryset = Question.objects.active()
-    serializer_class = QuestionSerializer
-
-class QuestionDetailAPIView(RetrieveUpdateDestroyAPIView):
-    serializer_class = QuestionSerializer
-    queryset = Question.objects.active()    
-
-
-class AnswerAPI(viewsets.ModelViewSet):
-    queryset = Answer.objects.all()
-    serializer_class = AnswerSerializer    
+        return response.Response({'message':'Invalid Credentials, try again'}, status=status.HTTP_401_UNAUTHORIZED)   
