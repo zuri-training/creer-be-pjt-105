@@ -22,5 +22,4 @@ class TestModel(APITestCase):
     def test_raises_error_with_message_when_no_username_is_supplied(self):
         with self.assertRaisesMessage(ValueError, 'The given username must be set'):
             User.objects.create_user(username='',email='tbello@gmail.com', password='123password@')
-        
-  
+

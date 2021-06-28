@@ -1,13 +1,14 @@
 from django.db import models
 from helpers.models import TrackingModel
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.contrib.auth.models import (PermissionsMixin, UserManager, AbstractBaseUser)
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-import jwt
 from datetime import datetime, timedelta
-from django.conf import settings
+import jwt
+
 # Create your models here.
 
 AUTH_PROVIDERS = {
@@ -25,7 +26,7 @@ class MyUserManager(UserManager):
             raise ValueError('The given username must be set')
 
         if not email :
-            raise ValueError('The givem email must be set')
+            raise ValueError('The given email must be set')
         # email = self.normalize_email(email)
         # Lookup
         # manager method can be used in migrations. This is fine because
