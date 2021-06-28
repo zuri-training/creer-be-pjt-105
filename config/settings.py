@@ -50,10 +50,12 @@ INSTALLED_APPS = [
     'drf_yasg',
     'authentication',
     'QandAmodel',
-    # 'allauth',
-    # 'allauth.account',
-    # 'allauth.socialaccount',
-    # 'allauth.socialaccount.providers.google',
+    'social_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
 ]
 
 SWAGGER_SETTINGS = {
