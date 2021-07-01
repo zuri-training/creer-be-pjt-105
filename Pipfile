@@ -17,6 +17,9 @@ django-heroku = "*"
 djangorestframework-simplejwt = "*"
 drf-yasg = "*"
 google-api-python-client = "*"
+pillow = "*"
+psycopg2 = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 

@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import fields, serializers
 from authentication.models import User
 
 
@@ -21,3 +21,5 @@ class LoginSerializer(serializers.ModelSerializer):
         fields = ('email', 'password', 'token')
 
         read_only_fields =['token']
+
+
