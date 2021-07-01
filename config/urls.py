@@ -24,9 +24,9 @@ schema_view = get_schema_view(
    openapi.Info(
       title="Authentication Web Api",
       default_version='v1',
-      description="This is the API for Login, Register",
+      description="This is the API for Creer ",
       terms_of_service="https://mycreer/terms/",
-      contact=openapi.Contact(email="contact@contacts.remote"),
+      contact=openapi.Contact(email="bello4aus@gmail.com"),
       license=openapi.License(name="Test License"),
    ),
    public=True,

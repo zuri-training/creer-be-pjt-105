@@ -64,7 +64,6 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
     Username and password are required. Other fields are optional.
     """
     username_validator = UnicodeUsernameValidator()
-    profile_image = models.ImageField(null=True, blank=True)
     username = models.CharField(
         _('username'),
         max_length=150,
@@ -99,9 +98,9 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
             'Designates whether this users email is verified.'
         ),
     )
-    auth_provider = models.CharField(
-        max_length=255, blank=False,null=True, default=AUTH_PROVIDERS.get('email')
-    )
+    # auth_provider = models.CharField(
+    #     max_length=255, blank=False,null=True, default=AUTH_PROVIDERS.get('email')
+    # )
     objects = MyUserManager()
 
     EMAIL_FIELD = 'email'
