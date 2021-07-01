@@ -62,7 +62,7 @@ INSTALLED_APPS = [
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS':{
-        'Auth Token eg [Bearer] (JWT)':{
+        'Bearer':{
             "type":"apiKey",
             "name":"Authorization",
             "in":"header"
@@ -141,9 +141,10 @@ REST_FRAMEWORK= {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_FILTER_BACKENDS':[
+    'NON_FIELD_ERRORS_KEY':'error',
+    'DEFAULT_FILTER_BACKENDS': [ 
         'django_filters.rest_framework.DjangoFilterBackend'
-    ]
+    ],
 }
 
 SIMPLE_JWT = {
@@ -198,6 +199,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SITE_ID = 1
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
+
 
 # LOGIN_REDIRECT_URL = '/'
 # LOGOUT_REDIRECT_URL = '/'
