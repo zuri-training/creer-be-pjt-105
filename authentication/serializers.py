@@ -26,7 +26,7 @@ class LoginSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         max_length=128, min_length=6, write_only=True)
     username = serializers.CharField(max_length=255, min_length=3, read_only=True)
-    tokens = serializers.CharField(max_length=68, min_length=6, read_only=True)
+    token = serializers.CharField(max_length=68, min_length=6, read_only=True)
 
     def validate(self, attrs):
         email = attrs.get('email', '')

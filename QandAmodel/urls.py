@@ -13,5 +13,5 @@ urlpatterns = [
     # path('', include(router.urls)),
     path('',PostQuestionAPI.as_view(), name='question-list'),
     path('question/<uuid:pk>/', QuestionDetailAPIView.as_view(), name='question-detail'),
-    path('answer/<uuid:pk>/', AnswerAPI.as_view, name='question')
+    path('answer/<uuid:pk>/', AnswerAPI.as_view, name='answers')
 ]
