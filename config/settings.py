@@ -15,6 +15,8 @@ from environs import Env
 import django_heroku
 from datetime import timedelta
 
+# postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName"
+
 env = Env()
 env.read_env()
 
@@ -48,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
+    'corsheaders',
     'authentication',
     'QandAmodel',
     'social_auth',
@@ -55,7 +58,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-
 ]
 
 SWAGGER_SETTINGS = {
@@ -72,6 +74,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -79,6 +82,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_WHITELIST = [
+
+]
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
