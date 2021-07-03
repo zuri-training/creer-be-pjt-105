@@ -1,11 +1,11 @@
 from django.db import models
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from authentication.models import User
 from datetime import datetime
 # from django.conf import settings
 from django.db.models import DateTimeField
 # from django.contrib.postgres.fields import ArrayField
-
+User = get_user_model()
 # Create your models here.
 class Question(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)

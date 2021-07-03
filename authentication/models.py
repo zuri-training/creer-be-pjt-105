@@ -7,7 +7,7 @@ from django.contrib.auth.models import (PermissionsMixin, UserManager, AbstractB
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from datetime import datetime, timedelta
-import jwt
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your models here.
 
@@ -64,7 +64,6 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
     Username and password are required. Other fields are optional.
     """
     username_validator = UnicodeUsernameValidator()
-    profile_image = models.ImageField(null=True, blank=True)
     username = models.CharField(
         _('username'),
         max_length=150,
@@ -99,9 +98,7 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
             'Designates whether this users email is verified.'
         ),
     )
-    auth_provider = models.CharField(
-        max_length=255, blank=False,null=True, default=AUTH_PROVIDERS.get('email')
-    )
+  
     objects = MyUserManager()
 
     EMAIL_FIELD = 'email'
@@ -110,8 +107,12 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
 
     def __str__(self):
         return self.email
-    @property  
+  
     def token(self):
-        token = jwt.encode({'username':self.username, 'email':self.email,'exp':datetime.utcnow() + timedelta(hours=24)},  settings.SECRET_KEY, algorithm='HS256')
-        return token
+        refresh = RefreshToken.for_user(self)
+        return {
+            'refresh':str(refresh),
+            'access': str(tokens.access_token)
+        }
 
+ 
