@@ -107,7 +107,7 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
 
     def __str__(self):
         return self.email
-    @property  
+  
     def token(self):
         refresh = RefreshToken.for_user(self)
         return {
