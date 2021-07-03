@@ -9,7 +9,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Question
-        fields = ('__all__')
+        fields = ['title','author','body','image']
 
 
 class AnswerSerializer(serializers.ModelSerializer):
