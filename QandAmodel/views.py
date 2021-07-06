@@ -8,23 +8,31 @@ from rest_framework import permissions
 
 # Create your views here.
 
-class PostQuestionAPI(LoginRequiredMixin,ListCreateAPIView):
+class QuestionListAPIView(LoginRequiredMixin,ListCreateAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'body']
-    permissions = (permissions.IsAuthenticated, )
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serialiizer):
+        return serialiizer.save(author=self.request.user)
+
 
 
 class QuestionDetailAPIView(LoginRequiredMixin,RetrieveUpdateDestroyAPIView):
     serializer_class = QuestionSerializer
     queryset = Question.objects.all()   
-    permissions = (permissions.IsAuthenticated,)
+    permission_classes = [permissions.IsAuthenticated,]
     lookup_field ="id"
+    def perform_create(self, serializer):
+        return serialiizer.save(author=self.request.user)
+
 
 #what is performcreate
-class AnswerAPI(LoginRequiredMixin, viewsets.ModelViewSet):
-    queryset = Answer.objects.all()
+class AnswerAPIView(LoginRequiredMixin, viewsets.ModelViewSet):
     serializer_class = AnswerSerializer
-    permissions = (permissions.IsAuthenticated,)
+    queryset = Answer.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
 
+   

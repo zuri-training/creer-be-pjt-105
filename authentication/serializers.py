@@ -51,7 +51,7 @@ class LoginSerializer(serializers.ModelSerializer):
         return {
             'email': user.email,
             'username': user.username,
-            'tokens': user.token
+            'token': user.token
         }
         
     class Meta:
@@ -88,3 +88,6 @@ class SetNewPasswordSerializer(serializers.Serializer):
         except Exception as e:
                 raise AuthenticationFailed('The rest link is invalid')
         return super().validate(attrs)
+
+class PasswordTokenCheckSerializer(serializers.Serializer):
+    pass

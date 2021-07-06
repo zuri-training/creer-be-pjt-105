@@ -1,7 +1,7 @@
 from QandAmodel import views
 from django.urls import path, include
 # from rest_framework import routers
-from .views import QuestionDetailAPIView, PostQuestionAPI, AnswerAPI
+from .views import QuestionListAPIView, QuestionDetailAPIView, AnswerAPIView
 
 
 
@@ -11,7 +11,7 @@ from .views import QuestionDetailAPIView, PostQuestionAPI, AnswerAPI
 
 urlpatterns = [
     # path('', include(router.urls)),
-    path('',PostQuestionAPI.as_view(), name='question-list'),
-    path('question/<uuid:pk>/', QuestionDetailAPIView.as_view(), name='question-detail'),
-    path('answer/<uuid:pk>/', AnswerAPI.as_view, name='answers')
+    path('',QuestionListAPIView.as_view(), name='question-list'),
+    path('question/<int:id>/', QuestionDetailAPIView.as_view(), name='question-detail'),
+    path('answer/<int:id>/', AnswerAPIView.as_view, name='answers')
 ]
