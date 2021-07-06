@@ -23,7 +23,7 @@ class QuestionListAPIView(LoginRequiredMixin,ListCreateAPIView):
 class QuestionDetailAPIView(LoginRequiredMixin,RetrieveUpdateDestroyAPIView):
     serializer_class = QuestionSerializer
     queryset = Question.objects.all()   
-    permission_classes = [permissions.IsAuthenticated,]
+    permission_classes = [permissions.IsAuthenticated]
     lookup_field ="id"
     def perform_create(self, serializer):
         return serialiizer.save(author=self.request.user)
