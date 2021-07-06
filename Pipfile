@@ -22,6 +22,7 @@ psycopg2 = "*"
 django-cors-headers = "*"
 django-filter = "*"
 django-taggit = "*"
+faker = "*"
 
 [dev-packages]
 

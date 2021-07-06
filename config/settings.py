@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 from environs import Env
 import django_heroku
+import sys
 from datetime import timedelta
 
 # postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName"
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     'corsheaders',
     'authentication',
@@ -108,15 +110,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
+if 'test' in sys.argv:
+    DATABASES ={
+        'default':{
+            'ENGINE': env.str("TEST_ENGINE"),
+            'NAME': env.str("TEST_NAME"),
+            'USER': env.str("TEST_USER"),
+            'PASSWORD': env.str("TEST_PASSWORD"),
+            'HOST': env.str("TEST_HOST"),
+            'PORT': env.str("TEST_PORT"),
+            'TEST':{
+                'NAME': env.str("TEST_NAME")
+            }
+        }
+    }
+else:
+    DATABASES = {
      #'default': {
        # 'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': BASE_DIR / 'db.sqlite3',
         # }
 
     'default': env.dj_db_url("DATABASE_URL")
-}
+    }
 
 
 # Password validation
