@@ -90,7 +90,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-
+    'http://127.0.0.1:3000',
 ]
 ROOT_URLCONF = 'config.urls'
 
@@ -160,8 +160,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK= {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
+        'rest_framework_simplejwt.authentication.JWTAuthentication',],
     'NON_FIELD_ERRORS_KEY':'error',
     'EXCEPTION_HANDLER':'utils.exception_handler.custom_exception_handler',
     'DEFAULT_FILTER_BACKENDS': [ 
@@ -175,39 +174,31 @@ REST_FRAMEWORK= {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-
     'ALGORITHM': 'HS256',
     'SIGNING_KEY':SECRET_KEY,
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
-
-    'AUTH_HEADER_TYPES': ('Bearer','JWT'),
-    
+    'AUTH_HEADER_TYPES': ('Bearer',),    
 }
 
 AUTHENTICATION_BACKENDS = [
-    'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
 ]
 
-# SOCIALACCOUNT_PROVIDERS = {
-#     'google':{
-#         'SCOPE':[
-#             'profile',
-#             'email',
-#         ],
-#         'AUTH_PARAMS':{
-#             'access_type':'online',
-#         }
-#     }
-# }
+SOCIALACCOUNT_PROVIDERS = {
+    'google':{
+        'SCOPE':[
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS':{
+            'access_type':'online',
+        }
+    }
+}
 
-
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('GOOGLE_CLIENT_ID')
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('GOOGLE_CLIENT_SECRET')
-SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [ 'profile','email']
 
 
 # Internationalization

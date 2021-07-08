@@ -28,7 +28,7 @@ def register_social_user(provider, user_id, email, name):
             return {
                 'username': registered_user.username,
                 'email': registered_user.email,
-                'tokens': registered_user.tokens()
+                'token': registered_user.token()
             }
 
         else:
@@ -43,12 +43,11 @@ def register_social_user(provider, user_id, email, name):
         user.is_verified = True
         user.auth_provider = provider
         user.save()
-
         new_user = authenticate(
             email=email, password=env.str('SOCIAL_SECRET'))
         return {
             'email': new_user.email,
             'username':new_user.username,
-            'tokens': new_user.token(),
+            'token': new_user.token(),
         }
     

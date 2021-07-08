@@ -11,11 +11,12 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=128, min_length=6, write_only=True)
     default_error_messages = {
-        'username' : 'The username should only contain alphanumeric characters'
+        'username' : 'The username should only contain alphanumeric characters',
+        'invalid' : 'Credentials wron'
     }
     class Meta:
         model = User
-        fields = ('username','email','password',)
+        fields = ('username' ,'firstname','email','password',)
 
     def validate(self, attrs):
         email = attrs.get('email', '')
@@ -60,16 +61,15 @@ class LoginSerializer(serializers.ModelSerializer):
         filtered_user_by_email = User.objects.filter(email=email)
         user = auth.authenticate(email=email, password=password)
 
-        if filtered_user_by_email.exists() and filtered_user_by_email[0].auth_provider != 'email':
-            raise AuthenticationFailed(
-                detail='Please continue your login using ' + filtered_user_by_email[0].auth_provider)
+        # if filtered_user_by_email.exists() and filtered_user_by_email[0].auth_provider != 'email':
+        #     raise AuthenticationFailed(detail='Please continue your login using ' + str(filtered_user_by_email[0].auth_provider))
 
         if not user:
             raise AuthenticationFailed('Invalid credentials, try again')
         if not user.is_active:
             raise AuthenticationFailed('Account disabled, contact admin')
-        if not user.is_verified:
-            raise AuthenticationFailed('Email is not verified')
+        # if not user.is_verified:
+        #     raise AuthenticationFailed('Email is not verified')
         return {
             'email': user.email,
             'username': user.username,

@@ -31,7 +31,6 @@ class Answer(models.Model):
     upvotes = models.ManyToManyField(User, related_name='answers_upvotes')
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
         return self.answer_text
 

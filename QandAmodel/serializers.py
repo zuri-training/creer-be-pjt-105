@@ -3,8 +3,6 @@ from authentication.models import User
 from .models import Question, Answer
 
 
-
-
 class QuestionSerializer(serializers.ModelSerializer):
     
     class Meta:

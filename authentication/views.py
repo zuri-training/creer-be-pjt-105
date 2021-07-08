@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import status,views, permissions
 from rest_framework.decorators import api_view
 from rest_framework.generics import GenericAPIView
+# from rest_framework.authentication import JWTAuthentication
 from authentication.serializers import (RegisterSerializer, 
 LoginSerializer, 
 EmailVerificationSerializer,
@@ -9,13 +10,15 @@ ResetPasswordEmailRequestSerializer,
 SetNewPasswordSerializer,
 LogoutSerializer)
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import authenticate
 from .models import User
 from .utils import Util
 from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
-from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 import jwt
@@ -29,6 +32,7 @@ from .utils import Util
 from django.shortcuts import redirect
 from django.http import HttpResponsePermanentRedirect
 from environs import Env
+from .permissions import IsLoggedInUserOrAdmin, IsAdminUser
 env = Env()
 env.read_env()
 
@@ -39,22 +43,23 @@ class CustomRedirect(HttpResponsePermanentRedirect):
 
 class RegisterAPIView(GenericAPIView):
     serializer_class = RegisterSerializer
-   
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        user_data = serializer.data
-        user = User.objects.get(email=user_data['email'])
-        token = RefreshToken.for_user(user).access_token
-        current_site = get_current_site(request).domain
-        relativeLink = reverse('email-verify')
-        absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
-        email_body = 'Hi '+user.username+' Use link below to verify your email \n'+absurl
-        data={'email_body': email_body, 'to_email':user.email ,'email_subject':'Verify your email'}
-        Util.send_email(data)
-        return Response(serializer.data,status=status.HTTP_201_CREATED)
-        
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            user_data = serializer.data
+            user = User.objects.get(email=user_data['email'])
+            token = RefreshToken.for_user(user).access_token
+            current_site = get_current_site(request).domain
+            relativeLink = reverse('email-verify')
+            absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
+            email_body = 'Hi '+user.username+' Use link below to verify your email \n'+absurl
+            data={'email_body': email_body, 'to_email':user.email ,'email_subject':'Verify your email'}
+            Util.send_email(data)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.default_error_messages['invalid'], status=status.HTTP_400_BAD_REQUEST)
+            
      
 class VerifyEmail(views.APIView):
     serializer_class = EmailVerificationSerializer
@@ -80,7 +85,7 @@ class VerifyEmail(views.APIView):
 
 class LoginAPIView(GenericAPIView):
     serializer_class = LoginSerializer
-
+    permissions_classes = [AllowAny]
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -89,8 +94,8 @@ class LoginAPIView(GenericAPIView):
 
 class RequestPasswordResetEmail(GenericAPIView):
     serializer_class = ResetPasswordEmailRequestSerializer
-
-    
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         email = request.data['email']
@@ -139,7 +144,7 @@ class PasswordTokenCheckAPI(GenericAPIView):
 
 class SetNewPasswordAPIView(GenericAPIView):
     serializer_class = SetNewPasswordSerializer
-
+    permission_classes = [IsAuthenticated]
     def patch(self, request):
         serialiizer = self.serializer_class(data=request.data)
         serialiizer.is_valid(raise_exception=True)
@@ -148,9 +153,7 @@ class SetNewPasswordAPIView(GenericAPIView):
 
 class LogoutAPIView( GenericAPIView):
     serializer_class = LogoutSerializer
-
-    permission_classes = (permissions.IsAuthenticated)
-
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)

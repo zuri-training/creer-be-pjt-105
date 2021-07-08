@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .serializers import AnswerSerializer, QuestionSerializer
 from rest_framework import viewsets, filters
@@ -24,6 +25,7 @@ class QuestionDetailAPIView(LoginRequiredMixin,RetrieveUpdateDestroyAPIView):
     serializer_class = QuestionSerializer
     queryset = Question.objects.all()   
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     lookup_field ="id"
     def perform_create(self, serializer):
         return serialiizer.save(author=self.request.user)
@@ -34,5 +36,4 @@ class AnswerAPIView(LoginRequiredMixin, viewsets.ModelViewSet):
     serializer_class = AnswerSerializer
     queryset = Answer.objects.all()
     permission_classes = [permissions.IsAuthenticated]
-
-   
+    authentication_classes = [JWTAuthentication]
