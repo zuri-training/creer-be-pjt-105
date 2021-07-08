@@ -48,18 +48,23 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    #third party packages
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     'corsheaders',
-    'authentication',
-    'QandAmodel',
-    'social_auth',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    #created apps
+    'authentication',
+    'QandAmodel',
+    'social_auth'
+
+
 ]
 
 SWAGGER_SETTINGS = {
@@ -158,6 +163,7 @@ REST_FRAMEWORK= {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'NON_FIELD_ERRORS_KEY':'error',
+    'EXCEPTION_HANDLER':'utils.exception_handler.custom_exception_handler',
     'DEFAULT_FILTER_BACKENDS': [ 
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
@@ -169,11 +175,20 @@ REST_FRAMEWORK= {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY':SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+
+    'AUTH_HEADER_TYPES': ('Bearer','JWT'),
+    
 }
 
 AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 # SOCIALACCOUNT_PROVIDERS = {
@@ -188,6 +203,13 @@ AUTHENTICATION_BACKENDS = [
 #     }
 # }
 
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('GOOGLE_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('GOOGLE_CLIENT_SECRET')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [ 'profile','email']
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -201,7 +223,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+LOGIN_URL = '/auth/login/google-oauth2/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 

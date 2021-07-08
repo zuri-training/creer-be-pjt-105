@@ -10,6 +10,9 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=128, min_length=6, write_only=True)
+    default_error_messages = {
+        'username' : 'The username should only contain alphanumeric characters'
+    }
     class Meta:
         model = User
         fields = ('username','email','password',)
@@ -19,7 +22,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         username = attrs.get('username', '')
 
         if not username.isalnum():
-            raise serializers.ValidationError('The username should only contain alphanumeric characters')
+            raise serializers.ValidationError(self.default_error_messages)
         return attrs
         
     def create(self, validated_data):
@@ -39,10 +42,28 @@ class LoginSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=255, min_length=3, read_only=True)
     token = serializers.CharField(max_length=68, min_length=6, read_only=True)
 
+    def get_tokens(self, obj):
+        user = User.objects.get(email=obj['email'])
+
+        return {
+            'refresh': user.token()['refresh'],
+            'access': user.token()['access']
+        }
+
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'username', 'token']
+
     def validate(self, attrs):
         email = attrs.get('email', '')
         password = attrs.get('password','')
+        filtered_user_by_email = User.objects.filter(email=email)
         user = auth.authenticate(email=email, password=password)
+
+        if filtered_user_by_email.exists() and filtered_user_by_email[0].auth_provider != 'email':
+            raise AuthenticationFailed(
+                detail='Please continue your login using ' + filtered_user_by_email[0].auth_provider)
+
         if not user:
             raise AuthenticationFailed('Invalid credentials, try again')
         if not user.is_active:
@@ -54,14 +75,12 @@ class LoginSerializer(serializers.ModelSerializer):
             'username': user.username,
             'token': user.token
         }
-        
-    class Meta:
-        model = User
-        fields = ('email', 'password', 'username','token')
+        return super().validate(attrs)
 
 
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(min_length=2)
+    redirect_url = serializers.CharField(max_length=500, required=False)
     class Meta:
         fields=['email']
 
@@ -90,8 +109,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
                 raise AuthenticationFailed('The rest link is invalid')
         return super().validate(attrs)
 
-class PasswordTokenCheckSerializer(serializers.Serializer):
-    pass
+
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()

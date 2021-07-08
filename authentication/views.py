@@ -26,7 +26,8 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse 
 from .utils import Util
-from django.shortcuts import redirect_url
+from django.shortcuts import redirect
+from django.http import HttpResponsePermanentRedirect
 from environs import Env
 env = Env()
 env.read_env()
@@ -89,8 +90,7 @@ class LoginAPIView(GenericAPIView):
 class RequestPasswordResetEmail(GenericAPIView):
     serializer_class = ResetPasswordEmailRequestSerializer
 
-    redirect_url = serializers.CharField(max_length=500, required=False)
-
+    
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         email = request.data['email']
@@ -120,23 +120,28 @@ class PasswordTokenCheckAPI(GenericAPIView):
                 else:
                     return CustomRedirect(env.str('FRONTEND_URL','')+'?token_valid=False')
 
+            
                 # return Response({'error': 'Token is not valid, please request a new one'}, status=status.HTTP_401_UNAUTHORIZED)
-            return CustomRedirect(redirect_url+'?token_valid=True&?message=Credentials Valid&?uid64='+uid64+'&?token='+token)
+            if redirect_url and len(redirect_url) > 3:
+                return CustomRedirect(redirect_url+'?token_valid=True&?message=Credentials Valid&?uid64='+uid64+'&?token='+token)
+            else:
+                return CustomRedirect(env.str('FRONTEND_URL', '')+'?token_valid=False')
             # return Response({'success':true, 'message':'Credentials is Valid','uidb64':uidb64, 'token':token}, status.HTTP_200_OK)
             
         except DjangoUnicodeDecodeError:
-            if not PasswordRestTokenGenerator().check_token(user):
+            try:
+                if not PasswordRestTokenGenerator().check_token(user):
                     return redirect(redirect_url+'?token_valid=False')
                 
                 # return Response({'error': 'Token is not valid, please request a new one'}, status=status.HTTP_401_UNAUTHORIZED)
-    
+            except UnboundLocalError as e:
+                return Response({'error': 'Token is not valid, please request a new one'}, status=status.HTTP_400_BAD_REQUEST)
 
 class SetNewPasswordAPIView(GenericAPIView):
     serializer_class = SetNewPasswordSerializer
 
     def patch(self, request):
         serialiizer = self.serializer_class(data=request.data)
-
         serialiizer.is_valid(raise_exception=True)
         return Response({'success':True, 'message':'Password reset_success'}, status=status.HTTP_200_OK)
 
