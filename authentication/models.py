@@ -111,13 +111,15 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
 
     def __str__(self):
         return self.email
-  
+    
+    @property
     def token(self):
         refresh = RefreshToken.for_user(self)
         return {
             'refresh':str(refresh),
             'access': str(refresh.access_token)
         }
+    
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

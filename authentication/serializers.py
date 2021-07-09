@@ -2,6 +2,7 @@ from rest_framework import fields, serializers
 from authentication.models import User
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib import auth
+# from django.db.models import Q
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str,force_str, smart_bytes,DjangoUnicodeDecodeError
@@ -16,7 +17,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     }
     class Meta:
         model = User
-        fields = ('username' ,'firstname','email','password',)
+        fields = ('username' ,'first_name','email','password','token')
 
     def validate(self, attrs):
         email = attrs.get('email', '')
@@ -76,6 +77,23 @@ class LoginSerializer(serializers.ModelSerializer):
             'token': user.token
         }
         return super().validate(attrs)
+        # if not email:
+        #     raise ValidationError("A username or email is required to Login")
+        # user = User.objects.filter(
+        #     Q(email=email) |
+        #     q(username=username)
+        # ).distinct()
+
+        # if user.exits() and user.count() == 1 :
+        #     user = user.first()
+        # else:
+        #     raise ValidationError(" This username/email is not valid")
+
+        # if user_obj:
+        #     if not user_obj.check_password(password):
+        #         raise ValidationError("Incorrect credentials, Please try again")
+        # data["token"] = "some token"
+        # return data
 
 
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
