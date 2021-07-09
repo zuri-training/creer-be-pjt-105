@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate 
+from django.contrib.auth import authenticate
 from authentication.models import User
 from environs import Env
 
@@ -22,7 +22,7 @@ def register_social_user(provider, user_id, email, name):
     filtered_user_by_email = User.objects.filter(email=email)
 
     if filtered_user_by_email.exists():
-        if provider == filtered_user_by_email[0].auth_provider:
+        if provider == filtered_user_by_email.auth_provider:
             registered_user = authenticate(
                 email=email, password=env.str("SOCIAL_SECRET"))
             return {
@@ -32,11 +32,12 @@ def register_social_user(provider, user_id, email, name):
             }
 
         else:
-            raise AuthenticationFailed('Please continue your login using'+filtered_user_by_email[0].auth_provider)
+            raise AuthenticationFailed(
+                'Please continue your login using' + str(filtered_user_by_email[0].auth_provider))
 
     else:
         user = {
-            'username':generate_username(name), 'email':email,
+            'username': generate_username(name), 'email': email,
             'password': env.str('SOCIAL_SECRET')
         }
         user = User.objects.create_user(**user)
@@ -47,7 +48,6 @@ def register_social_user(provider, user_id, email, name):
             email=email, password=env.str('SOCIAL_SECRET'))
         return {
             'email': new_user.email,
-            'username':new_user.username,
+            'username': new_user.username,
             'token': new_user.token(),
         }
-    
