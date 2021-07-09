@@ -4,24 +4,26 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
+Django = "*"
 django-restframework = "*"
 environs = "*"
 dj-database-url = "*"
 djangorestframework = "*"
 gunicorn = "*"
 coverage = "*"
-pyjwt = "*"
-django-allauth = "*"
+PyJWT = "*"
 django-heroku = "*"
 djangorestframework-simplejwt = "*"
 drf-yasg = "*"
 google-api-python-client = "*"
-pillow = "*"
+Pillow = "*"
 psycopg2 = "*"
 django-cors-headers = "*"
 django-filter = "*"
 django-taggit = "*"
+Faker = "*"
+social-auth-app-django = "*"
+django-allauth = "*"
 
 [dev-packages]
 

@@ -74,9 +74,13 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
             'unique': _("A user with that username already exists."),
         },
     )
-    # first_name = models.CharField(_('first name'), max_length=150, blank=True)
-    # last_name = models.CharField(_('last name'), max_length=150, blank=True)
+    first_name = models.CharField(_('first name'), max_length=150, blank=True)
+    last_name = models.CharField(_('last name'), max_length=150, blank=True)
+    auth_provider = models.CharField(
+        max_length=255, blank=False, null=True, default=AUTH_PROVIDERS.get('email')
+    )
     email = models.EmailField(_('email address'), blank=True, unique=True)
+    is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
@@ -107,12 +111,18 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
 
     def __str__(self):
         return self.email
-  
+    
+    @property
     def token(self):
         refresh = RefreshToken.for_user(self)
         return {
             'refresh':str(refresh),
-            'access': str(tokens.access_token)
+            'access': str(refresh.access_token)
         }
+    
 
- 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(max_length=500, blank=True)
+    phone_number = models.CharField(max_length=12, blank=True)
+    avatar = models.ImageField(null = True, blank=True)
