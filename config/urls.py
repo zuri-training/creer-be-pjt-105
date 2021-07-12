@@ -25,7 +25,7 @@ schema_view = get_schema_view(
    openapi.Info(
       title="Authentication Web Api",
       default_version='v1',
-      description="This is the API for Creer ",
+      description="You are now in the API for Creer, Base Url: creer-pjt-105.herokuapp.com/api , This API makes use of simplejwt token with a Bearer authorization. Register: You get an access token and refesh token which you save in your local storage.",
       terms_of_service="https://mycreer/terms/",
       contact=openapi.Contact(email="bello4aus@gmail.com"),
       license=openapi.License(name="Test License"),
