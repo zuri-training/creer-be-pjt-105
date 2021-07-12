@@ -3,7 +3,8 @@ from helpers.models import TrackingModel
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.contrib.auth.models import (PermissionsMixin, UserManager, AbstractBaseUser)
+from django.contrib.auth.models import (
+    PermissionsMixin, UserManager, AbstractBaseUser)
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -12,8 +13,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # Create your models here.
 
 AUTH_PROVIDERS = {
-    "google":"google",
+    "google": "google",
+    "creer": "creer",
 }
+
 
 class MyUserManager(UserManager):
     use_in_migrations = True
@@ -25,7 +28,7 @@ class MyUserManager(UserManager):
         if not username:
             raise ValueError('The given username must be set')
 
-        if not email :
+        if not email:
             raise ValueError('The given email must be set')
         # email = self.normalize_email(email)
         # Lookup
@@ -68,19 +71,25 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
         _('username'),
         max_length=150,
         unique=True,
-        help_text = ('150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        help_text=(
+            '150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
         validators=[username_validator],
         error_messages={
             'unique': _("A user with that username already exists."),
         },
     )
-    # first_name = models.CharField(_('first name'), max_length=150, blank=True)
-    # last_name = models.CharField(_('last name'), max_length=150, blank=True)
+    first_name = models.CharField(_('first name'), max_length=150, blank=True)
+    last_name = models.CharField(_('last name'), max_length=150, blank=True)
+    auth_provider = models.CharField(
+        max_length=255, blank=False, null=True, default=AUTH_PROVIDERS['creer']
+    )
     email = models.EmailField(_('email address'), blank=True, unique=True)
+    is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
-        help_text=_('Designates whether the user can log into this admin site.'),
+        help_text=_(
+            'Designates whether the user can log into this admin site.'),
     )
     is_active = models.BooleanField(
         _('active'),
@@ -98,7 +107,7 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
             'Designates whether this users email is verified.'
         ),
     )
-  
+
     objects = MyUserManager()
 
     EMAIL_FIELD = 'email'
@@ -107,12 +116,18 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
 
     def __str__(self):
         return self.email
-  
+
+    @property
     def token(self):
         refresh = RefreshToken.for_user(self)
         return {
-            'refresh':str(refresh),
-            'access': str(tokens.access_token)
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
         }
 
- 
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(max_length=500, blank=True)
+    phone_number = models.CharField(max_length=12, blank=True)
+    avatar = models.ImageField(null=True, blank=True)

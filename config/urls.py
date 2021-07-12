@@ -16,31 +16,40 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import permissions
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.documentation import include_docs_urls
+from rest_framework_simplejwt import views as jwt_views
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Authentication Web Api",
-      default_version='v1',
-      description="This is the API for Creer ",
-      terms_of_service="https://mycreer/terms/",
-      contact=openapi.Contact(email="bello4aus@gmail.com"),
-      license=openapi.License(name="Test License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="Authentication Web Api",
+        default_version='v1',
+        description="You are now in the API for Creer, Base Url: creer-pjt-105.herokuapp.com/api , This API makes use of simplejwt token with a Bearer authorization. Register: You get an access token and refesh token which you save in your local storage.",
+        terms_of_service="https://mycreer/terms/",
+        contact=openapi.Contact(email="bello4aus@gmail.com"),
+        license=openapi.License(name="Test License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
-
-
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('authentication.urls')),
-    path('api/QandA/', include('QandAmodel.urls')),
+    # path('api/token', jwt_views.TokenObtainPairView.as_view(),
+    #      name='token_obtain_pair'),
+    # path('api/token/refresh', jwt_views.TokenRefreshView.as_view(),
+    #      name='token_refresh'),
+    path('api/qanda/', include('QandAmodel.urls')),
     path('api/social_auth/', include('social_auth.urls')),
+    path('docs', include_docs_urls(title="CreerAPI")),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger'),
-    path('redoc', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc')
+    path('api/api.json/', schema_view.without_ui(cache_timeout=0),
+         name="schema-swagger-ui"),
+    path('redoc', schema_view.with_ui(
+        'redoc', cache_timeout=0), name='schema-redoc')
 ]

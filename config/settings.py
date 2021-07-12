@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 from environs import Env
 import django_heroku
+import sys
 from datetime import timedelta
 
 # postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName"
@@ -33,7 +34,7 @@ DEBUG = env.bool('DEBUG')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['https://creer-pjt-105.herokuapp.com/','127.0.0.1']
+ALLOWED_HOSTS = ['https://creer-pjt-105.herokuapp.com/', '127.0.0.1']
 
 AUTH_USER_MODEL = "authentication.User"
 
@@ -47,25 +48,31 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    # third party packages
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     'corsheaders',
-    'authentication',
-    'QandAmodel',
-    'social_auth',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    # created apps
+    'authentication',
+    'QandAmodel',
+    'social_auth'
+
+
 ]
 
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS':{
-        'Bearer':{
-            "type":"apiKey",
-            "name":"Authorization",
-            "in":"header"
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }
@@ -82,9 +89,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = [
+# CORS_ORIGIN_WHITELIST = [
+#     'http://127.0.0.1:3000',
+# ]
 
-]
+CORS_ALLOW_ALL_ORIGINS = True
+APPEND_SLASH = False
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -108,15 +118,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-     #'default': {
-       # 'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': BASE_DIR / 'db.sqlite3',
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': env.str("TEST_ENGINE"),
+            'NAME': env.str("TEST_NAME"),
+            'USER': env.str("TEST_USER"),
+            'PASSWORD': env.str("TEST_PASSWORD"),
+            'HOST': env.str("TEST_HOST"),
+            'PORT': env.str("TEST_PORT"),
+            'TEST': {
+                'NAME': env.str("TEST_NAME")
+            }
+        }
+    }
+else:
+    DATABASES = {
+        # 'default': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
         # }
 
-    'default': env.dj_db_url("DATABASE_URL")
-}
+        'default': env.dj_db_url("DATABASE_URL")
+    }
 
 
 # Password validation
@@ -137,37 +161,48 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK= {
+REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-    'NON_FIELD_ERRORS_KEY':'error',
-    'DEFAULT_FILTER_BACKENDS': [ 
+        'rest_framework_simplejwt.authentication.JWTAuthentication', ],
+    'NON_FIELD_ERRORS_KEY': 'error',
+    'EXCEPTION_HANDLER': 'utils.exception_handler.custom_exception_handler',
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
+    #     'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
 }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
 ]
 
-# SOCIALACCOUNT_PROVIDERS = {
-#     'google':{
-#         'SCOPE':[
-#             'profile',
-#             'email',
-#         ],
-#         'AUTH_PARAMS':{
-#             'access_type':'online',
-#         }
-#     }
-# }
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -182,7 +217,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+LOGIN_URL = '/auth/login/google-oauth2/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -190,7 +225,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 
 
 # Default primary key field type
