@@ -28,12 +28,12 @@ def register_social_user(provider, user_id, email, name):
             return {
                 'username': registered_user.username,
                 'email': registered_user.email,
-                'token': registered_user.token()
+                'token': registered_user.token
             }
 
         else:
             raise AuthenticationFailed(
-                'Please continue your login using' + str(filtered_user_by_email[0].auth_provider))
+                'Please continue your login using' + str(filtered_user_by_email[0].auth_provider['creer']))
 
     else:
         user = {
@@ -49,5 +49,5 @@ def register_social_user(provider, user_id, email, name):
         return {
             'email': new_user.email,
             'username': new_user.username,
-            'token': new_user.token(),
+            'token': new_user.token,
         }
