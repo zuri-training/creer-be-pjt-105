@@ -1,16 +1,17 @@
 from django.shortcuts import render
 from rest_framework import status, views, permissions
 from rest_framework.decorators import api_view
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView
 # from rest_framework.authentication import JWTAuthentication
 from authentication.serializers import (RegisterSerializer,
                                         LoginSerializer,
                                         EmailVerificationSerializer,
                                         ResetPasswordEmailRequestSerializer,
                                         SetNewPasswordSerializer,
-                                        LogoutSerializer)
+                                        LogoutSerializer,
+                                        UserSerializer)
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -33,8 +34,11 @@ from django.shortcuts import redirect
 from django.http import HttpResponsePermanentRedirect
 from environs import Env
 from .permissions import IsLoggedInUserOrAdmin, IsAdminUser
+from django.conf import settings
 env = Env()
 env.read_env()
+
+# User = settings.AUTH_USER_MODEL
 
 # Create your views here.
 
@@ -99,6 +103,14 @@ class LoginAPIView(GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UsersView(GenericAPIView):
+    permissions = [IsAuthenticatedOrReadOnly]
+    serializer_class = UserSerializer
+
+    def get(self, request, format=None):
+        return Response(self.serializer_class(request.user).data)
 
 
 class RequestPasswordResetEmail(GenericAPIView):
