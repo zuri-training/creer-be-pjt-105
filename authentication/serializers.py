@@ -2,7 +2,7 @@ from rest_framework import fields, serializers
 from authentication.models import User
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib import auth
-# from django.db.models import Q
+from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
@@ -103,6 +103,14 @@ class LoginSerializer(serializers.ModelSerializer):
         # return data
 
 
+class UserSerializer(serializers.ModelSerializer):
+    # email = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'email', 'first_name', 'last_name', 'token']
+
+
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(min_length=2)
     redirect_url = serializers.CharField(max_length=500, required=False)
@@ -152,3 +160,11 @@ class LogoutSerializer(serializers.Serializer):
             RefreshToken(self.token).blacklist()
         except TokenError:
             self.fail('bad_token')
+
+    # def get(self, obj):
+    #     user = User.objects.get()
+    #     return user
+        # {
+        #     'refresh': user.token()['refresh'],
+        #     'access': user.token()['access']
+        # }
