@@ -16,8 +16,8 @@ class QuestionListAPIView(ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['title', 'body']
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ['title', 'body']
 
     def perform_create(self, serialiizer):
         return serialiizer.save(author=self.request.user)
