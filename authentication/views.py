@@ -61,7 +61,7 @@ class RegisterAPIView(GenericAPIView):
             current_site = get_current_site(request).domain
             relativeLink = reverse('email-verify')
             absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
-            email_body = 'Hi '+user.username+' Use link below to verify your email \n'+absurl
+            email_body = 'Hi '+user.first_name+' Use link below to verify your email \n'+absurl
             data = {'email_body': email_body, 'to_email': user.email,
                     'email_subject': 'Verify your email'}
             Util.send_email(data)
