@@ -27,8 +27,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         email = attrs.get('email', '')
         # username = attrs.get('username', '')
 
-        if not username.isalnum():
-            raise serializers.ValidationError(self.default_error_messages)
+        # if not username.isalnum():
+        #     raise serializers.ValidationError(self.default_error_messages)
         return attrs
 
     def create(self, validated_data):
