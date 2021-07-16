@@ -20,12 +20,12 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'last_name', 'first_name',
+        fields = ('last_name', 'first_name',
                   'email', 'password', 'token')
 
     def validate(self, attrs):
         email = attrs.get('email', '')
-        username = attrs.get('username', '')
+        # username = attrs.get('username', '')
 
         if not username.isalnum():
             raise serializers.ValidationError(self.default_error_messages)
@@ -47,8 +47,8 @@ class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255, min_length=3)
     password = serializers.CharField(
         max_length=128, min_length=6, write_only=True)
-    username = serializers.CharField(
-        max_length=255, min_length=3, read_only=True)
+    # username = serializers.CharField(
+    #     max_length=255, min_length=3, read_only=True)
     token = serializers.CharField(max_length=68, min_length=6, read_only=True)
 
     def get_tokens(self, obj):
@@ -61,7 +61,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'username', 'token']
+        fields = ['email', 'password', 'token']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
@@ -80,7 +80,7 @@ class LoginSerializer(serializers.ModelSerializer):
         #     raise AuthenticationFailed('Email is not verified')
         return {
             'email': user.email,
-            'username': user.username,
+            # 'username': user.username,
             'token': user.token
         }
         return super().validate(attrs)
@@ -108,7 +108,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'first_name', 'last_name', 'token']
+        fields = ['email', 'first_name', 'last_name', 'token']
 
 
 class ResetPasswordEmailRequestSerializer(serializers.Serializer):
